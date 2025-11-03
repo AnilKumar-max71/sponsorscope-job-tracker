@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsorscope - UK Sponsorship Job Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a5276;
+            --secondary: #2e86c1;
+            --accent: #e74c3c;
+            --light: #ebf5fb;
+            --dark: #154360;
+            --success: #27ae60;
+            --warning: #f39c12;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #e8f5e9 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background: var(--primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 0.8rem 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+            display: flex;
+            align-items: center;
+            font-size: 1.4rem;
+        }
+        
+        .logo-placeholder {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        .sidebar {
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            min-height: calc(100vh - 76px);
+            padding: 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 76px;
+        }
+        
+        .sidebar .nav-link {
+            color: var(--dark);
+            padding: 14px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: var(--light);
+            color: var(--secondary);
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .main-content {
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin: 25px 0;
+            border: 1px solid #e1f5fe;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+        
+        .page-header h2 {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+        
+        .page-header p {
+            color: #2c3e50;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--secondary);
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 700;
+            padding: 18px 25px;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-new {
+            background-color: #e3f2fd;
+            color: var(--secondary);
+        }
+        
+        .status-applied {
+            background-color: #e8f5e9;
+            color: var(--success);
+        }
+        
+        .status-interview {
+            background-color: #fff3e0;
+            color: var(--warning);
+        }
+        
+        .status-offer {
+            background-color: #e8f5e9;
+            color: var(--success);
+        }
+        
+        .status-rejected {
+            background-color: #ffebee;
+            color: var(--accent);
+        }
+        
+        .progress {
+            height: 12px;
+            margin-top: 12px;
+            border-radius: 6px;
+            background-color: #f0f0f0;
+        }
+        
+        .progress-bar {
+            border-radius: 6px;
+        }
+        
+        .job-match-score {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--secondary);
+            line-height: 1;
+        }
+        
+        .btn-primary {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn-outline-primary {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .table th {
+            border-top: none;
+            font-weight: 700;
+            color: var(--dark);
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .table td {
+            padding: 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-right: 8px;
+            font-weight: 500;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .step-indicator:before {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: #e0e0e0;
+            z-index: 1;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .step.active .step-number {
+            background-color: var(--secondary);
+            box-shadow: 0 0 0 4px rgba(46, 134, 193, 0.2);
+        }
+        
+        .step.completed .step-number {
+            background-color: var(--success);
+        }
+        
+        .step-label {
+            font-size: 0.9rem;
+            text-align: center;
+            max-width: 90px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 50px 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #fafafa;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--secondary);
+            background-color: #f0f7ff;
+        }
+        
+        .contact-card {
+            border-left: 4px solid var(--secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .contact-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .ats-score {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--success);
+        }
+        
+        .skill-priority {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .priority-high {
+            background-color: #ffebee;
+            color: var(--accent);
+            border-left: 4px solid var(--accent);
+        }
+        
+        .priority-medium {
+            background-color: #fff3e0;
+            color: var(--warning);
+            border-left: 4px solid var(--warning);
+        }
+        
+        .priority-low {
+            background-color: #e8f5e9;
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+        
+        .email-template {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .dashboard-stat {
+            text-align: center;
+            padding: 25px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-top: 4px solid var(--secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--secondary);
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: #666;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+        
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .modal-title {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .resume-preview {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            background-color: #f9f9f9;
+            min-height: 450px;
+        }
+        
+        .cv-template {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .cv-template:hover, .cv-template.selected {
+            border-color: var(--secondary);
+            background-color: #f0f7ff;
+            transform: translateY(-3px);
+        }
+        
+        .keyword-badge {
+            display: inline-block;
+            background-color: #e3f2fd;
+            color: var(--secondary);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin: 4px;
+            font-weight: 600;
+        }
+        
+        .cv-length-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .cv-length-option:hover, .cv-length-option.selected {
+            border-color: var(--secondary);
+            background-color: #f0f7ff;
+            transform: translateY(-3px);
+        }
+        
+        .human-tone-indicator {
+            display: flex;
+            align-items: center;
+            margin-top: 12px;
+        }
+        
+        .tone-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .tone-excellent {
+            background-color: var(--success);
+        }
+        
+        .footer {
+            background: var(--primary);
+            color: white;
+            padding: 40px 0 30px;
+            margin-top: 50px;
+        }
+        
+        .footer h5 {
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .footer a {
+            color: #aed6f1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: white;
+        }
+        
+        .legal-links {
+            margin-top: 25px;
+        }
+        
+        .legal-links a {
+            margin-right: 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .contact-support {
+            background: linear-gradient(135deg, #dcedc1 0%, #a8e6cf 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .premium-badge {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #7d6608;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        
+        .d-none {
+            display: none !important;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 0.2rem rgba(46, 134, 193, 0.25);
+        }
+        
+        .alert {
+            border-radius: 10px;
+            padding: 15px 20px;
+            border: none;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+                position: static;
+            }
+            
+            .main-content {
+                padding: 20px;
+                margin: 15px 0;
+            }
+            
+            .step-indicator {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .step-indicator:before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <div class="logo-placeholder">SC</div>
+                Sponsorscope
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-bell"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-question-circle"></i></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i> John Doe
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-page="dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="add-job">
+                            <i class="fas fa-plus-circle"></i> Add Job
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="job-tracker">
+                            <i class="fas fa-briefcase"></i> Job Tracker
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="cv-manager">
+                            <i class="fas fa-file-alt"></i> CV Manager <span class="premium-badge">PRO</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="contact-sourcing">
+                            <i class="fas fa-envelope"></i> Contact Sourcing <span class="premium-badge">PRO</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="sponsorship-check">
+                            <i class="fas fa-search"></i> Sponsorship Check
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="analytics">
+                            <i class="fas fa-chart-bar"></i> Analytics <span class="premium-badge">PRO</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="mt-4 p-3">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h6>Upgrade to Premium</h6>
+                            <p class="small mb-3">Unlock all features including AI CV tailoring</p>
+                            <button class="btn btn-primary btn-sm">Upgrade Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10">
+                <!-- Dashboard Page -->
+                <div class="main-content" id="dashboard-page">
+                    <div class="page-header">
+                        <h2>Job Application Dashboard</h2>
+                        <p>Track your UK job search with sponsorship opportunities</p>
+                    </div>
+                    
+                    <!-- Dashboard Stats -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="dashboard-stat">
+                                <div class="stat-number">12</div>
+                                <div class="stat-label">Total Jobs</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="dashboard-stat">
+                                <div class="stat-number">8</div>
+                                <div class="stat-label">Applied</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="dashboard-stat">
+                                <div class="stat-number">3</div>
+                                <div class="stat-label">Interviews</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="dashboard-stat">
+                                <div class="stat-number">5</div>
+                                <div class="stat-label">Sponsorship Available</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Job Application Steps -->
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Policy & Risk Senior Specialist at M&G plc</span>
+                            <span class="status-badge status-new">New</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="step-indicator">
+                                <div class="step completed">
+                                    <div class="step-number"><i class="fas fa-check"></i></div>
+                                    <div class="step-label">Job Added</div>
+                                </div>
+                                <div class="step completed">
+                                    <div class="step-number"><i class="fas fa-check"></i></div>
+                                    <div class="step-label">CV Match</div>
+                                </div>
+                                <div class="step active">
+                                    <div class="step-number">3</div>
+                                    <div class="step-label">Tailor CV</div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">4</div>
+                                    <div class="step-label">Cover Letter</div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">5</div>
+                                    <div class="step-label">Find Contacts</div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">6</div>
+                                    <div class="step-label">Apply</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">Job Match Score</h5>
+                                    <div class="job-match-score">87%</div>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 87%"></div>
+                                    </div>
+                                    <p class="mb-4">Your CV matches 87% of the job requirements</p>
+                                    
+                                    <h5 class="mb-3">Key Skills Priority</h5>
+                                    <div>
+                                        <span class="skill-priority priority-high">Risk Management</span>
+                                        <span class="skill-priority priority-high">Policy Implementation</span>
+                                        <span class="skill-priority priority-medium">Financial Crime Operations</span>
+                                        <span class="skill-priority priority-medium">Risk Assessment</span>
+                                        <span class="skill-priority priority-low">Stakeholder Management</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">Sponsorship Check</h5>
+                                    <div class="alert alert-success mb-4">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <strong>Sponsorship Available</strong>
+                                        <p class="mb-0 mt-1">M&G plc is on the registered sponsors list</p>
+                                    </div>
+                                    
+                                    <h5 class="mb-3">ATS Resume Score</h5>
+                                    <div class="ats-score">92%</div>
+                                    <p class="mb-4">Your resume is ATS-friendly and will pass through most systems</p>
+                                    
+                                    <div class="human-tone-indicator">
+                                        <span class="tone-dot tone-excellent"></span>
+                                        <span class="small text-muted">Human Tone: Excellent (98% authentic)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#tailorCvModal">
+                                    <i class="fas fa-file-alt me-1"></i> Tailor CV with AI
+                                </button>
+                                <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#coverLetterModal">
+                                    <i class="fas fa-envelope me-1"></i> Generate Cover Letter
+                                </button>
+                                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#contactsModal">
+                                    <i class="fas fa-users me-1"></i> Find Contacts
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Jobs Table -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Recent Job Applications</span>
+                            <button class="btn btn-sm btn-primary" id="add-job-btn">
+                                <i class="fas fa-plus me-1"></i> Add Job
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Job Title</th>
+                                            <th>Company</th>
+                                            <th>Date Added</th>
+                                            <th>Status</th>
+                                            <th>Match Score</th>
+                                            <th>Sponsorship</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Policy & Risk Senior Specialist</td>
+                                            <td>M&G plc</td>
+                                            <td>Sep 3, 2025</td>
+                                            <td><span class="status-badge status-new">New</span></td>
+                                            <td>
+                                                <div class="progress" style="height: 12px; width: 120px;">
+                                                    <div class="progress-bar bg-success" style="width: 87%"></div>
+                                                </div>
+                                            </td>
+                                            <td><i class="fas fa-check text-success"></i></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary action-btn">View</button>
+                                                <button class="btn btn-sm btn-outline-secondary action-btn">Edit</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Senior Operational Risk Analyst</td>
+                                            <td>Capital.com</td>
+                                            <td>Sep 3, 2025</td>
+                                            <td><span class="status-badge status-applied">Applied</span></td>
+                                            <td>
+                                                <div class="progress" style="height: 12px; width: 120px;">
+                                                    <div class="progress-bar bg-success" style="width: 76%"></div>
+                                                </div>
+                                            </td>
+                                            <td><i class="fas fa-check text-success"></i></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary action-btn">View</button>
+                                                <button class="btn btn-sm btn-outline-secondary action-btn">Edit</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Senior Risk Analyst</td>
+                                            <td>Autarea</td>
+                                            <td>Sep 3, 2025</td>
+                                            <td><span class="status-badge status-interview">Interview</span></td>
+                                            <td>
+                                                <div class="progress" style="height: 12px; width: 120px;">
+                                                    <div class="progress-bar bg-warning" style="width: 65%"></div>
+                                                </div>
+                                            </td>
+                                            <td><i class="fas fa-times text-danger"></i></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary action-btn">View</button>
+                                                <button class="btn btn-sm btn-outline-secondary action-btn">Edit</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Job Page (Hidden by default) -->
+                <div class="main-content d-none" id="add-job-page">
+                    <div class="page-header">
+                        <h2>Add New Job</h2>
+                        <p>Track opportunities from LinkedIn, Indeed, and company websites</p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Enter Job Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="add-job-form">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="job-title" class="form-label">Job Title</label>
+                                        <input type="text" class="form-control" id="job-title" placeholder="e.g. Policy & Risk Senior Specialist" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="company" class="form-label">Company</label>
+                                        <input type="text" class="form-control" id="company" placeholder="e.g. M&G plc" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="job-url" class="form-label">Job URL</label>
+                                        <input type="url" class="form-control" id="job-url" placeholder="https://www.linkedin.com/jobs/view/..." required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="source" class="form-label">Source</label>
+                                        <select class="form-select" id="source" required>
+                                            <option value="">Select source</option>
+                                            <option value="LinkedIn">LinkedIn</option>
+                                            <option value="Indeed">Indeed</option>
+                                            <option value="Company Website">Company Website</option>
+                                            <option value="gov.uk">gov.uk</option>
+                                            <option value="NHS Jobs">NHS Jobs</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="job-description" class="form-label">Job Description</label>
+                                    <textarea class="form-control" id="job-description" rows="6" placeholder="Paste the job description here..." required></textarea>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="location" class="form-label">Location</label>
+                                        <input type="text" class="form-control" id="location" placeholder="e.g. London, UK">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="salary" class="form-label">Salary (Optional)</label>
+                                        <input type="text" class="form-control" id="salary" placeholder="e.g. £45,000 - £55,000">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="sponsorship-check" checked>
+                                        <label class="form-check-label" for="sponsorship-check">
+                                            Check sponsorship availability automatically
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-secondary me-2" id="cancel-add-job">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Add Job & Check Match</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CV Manager Page (Hidden by default) -->
+                <div class="main-content d-none" id="cv-manager-page">
+                    <div class="page-header">
+                        <h2>CV Manager</h2>
+                        <p>Create ATS-friendly CVs with authentic human tone</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Upload CV</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="upload-area" id="cv-upload-area">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                        <p>Drag & drop your CV here or click to browse</p>
+                                        <small class="text-muted">Supported formats: PDF, DOC, DOCX (Max 5MB)</small>
+                                    </div>
+                                    <input type="file" id="cv-file-input" class="d-none" accept=".pdf,.doc,.docx">
+                                    
+                                    <div class="mt-4">
+                                        <h6 class="mb-3">Or create a new CV</h6>
+                                        <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#createCvModal">
+                                            <i class="fas fa-plus me-2"></i> Create New CV
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">My CVs</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush" id="cv-list">
+                                        <!-- CV list will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">CV Preview</h5>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary me-2">
+                                            <i class="fas fa-download me-1"></i> Download
+                                        </button>
+                                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#tailorCvModal">
+                                            <i class="fas fa-magic me-1"></i> Tailor with AI
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="resume-preview" id="cv-preview">
+                                        <p class="text-center text-muted mt-5">Select a CV to preview</p>
+                                    </div>
+                                    
+                                    <div class="mt-4">
+                                        <h6 class="mb-3">ATS Score</h6>
+                                        <div class="progress mb-3">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 92%"></div>
+                                        </div>
+                                        <p class="small text-muted mb-3">Your CV is 92% ATS-friendly based on keyword optimization and formatting.</p>
+                                        
+                                        <div class="human-tone-indicator">
+                                            <span class="tone-dot tone-excellent"></span>
+                                            <span class="small text-muted">Human Tone: Excellent (98% authentic)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sponsorship Check Page (Hidden by default) -->
+                <div class="main-content d-none" id="sponsorship-check-page">
+                    <div class="page-header">
+                        <h2>Sponsorship Availability Check</h2>
+                        <p>Verify companies on the UK Government registered sponsors list</p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Check Company Sponsorship Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="company-search" placeholder="Enter company name to check sponsorship status">
+                                        <button class="btn btn-primary" type="button" id="search-company">
+                                            <i class="fas fa-search me-1"></i> Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="sponsorship-results">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Enter a company name above to check if they are registered sponsors on the UK Government list.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Companies with Sponsorship</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Company Name</th>
+                                            <th>Sponsor Type</th>
+                                            <th>Rating</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>M&G plc</td>
+                                            <td>Worker</td>
+                                            <td>
+                                                <span class="text-warning">
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star-half-alt"></i>
+                                                </span>
+                                            </td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View Jobs</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Capital.com</td>
+                                            <td>Worker</td>
+                                            <td>
+                                                <span class="text-warning">
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                </span>
+                                            </td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View Jobs</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>NHS Business Services Authority</td>
+                                            <td>Worker</td>
+                                            <td>
+                                                <span class="text-warning">
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                </span>
+                                            </td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">View Jobs</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other pages would continue here -->
+                <div class="main-content d-none" id="job-tracker-page">
+                    <div class="page-header">
+                        <h2>Job Tracker</h2>
+                        <p>Track all your job applications in one place</p>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Job tracker page content would go here.
+                    </div>
+                </div>
+
+                <div class="main-content d-none" id="contact-sourcing-page">
+                    <div class="page-header">
+                        <h2>Contact Sourcing</h2>
+                        <p>Find hiring managers and recruiters</p>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Contact sourcing page content would go here.
+                    </div>
+                </div>
+
+                <div class="main-content d-none" id="analytics-page">
+                    <div class="page-header">
+                        <h2>Analytics</h2>
+                        <p>View your job search performance</p>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Analytics page content would go here.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Sponsorscope</h5>
+                    <p>Your trusted partner for UK job search with sponsorship opportunities.</p>
+                    <div class="legal-links">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of Service</a>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#cookiesModal">Cookie Policy</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5>Contact Support</h5>
+                    <p>Have questions or need assistance? We're here to help.</p>
+                    <div class="contact-support">
+                        <i class="fas fa-envelope me-2"></i>
+                        <a href="mailto:sponsorscope.0@gmail.com">sponsorscope.0@gmail.com</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; 2025 Sponsorscope. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    
+    <!-- Tailor CV Modal -->
+    <div class="modal fade" id="tailorCvModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tailor CV with AI</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Our AI will analyze the job description and optimize your CV to match the requirements while maintaining a natural, human tone that avoids AI detection.</p>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Select CV to tailor</label>
+                        <select class="form-select" id="cv-select">
+                            <option>John_Doe_CV_General.pdf</option>
+                            <option>John_Doe_CV_Finance.pdf</option>
+                            <option>John_Doe_CV_Risk.pdf</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">CV Length</label>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="cv-length-option selected" data-length="1">
+                                    <h6>One Page CV</h6>
+                                    <p class="small text-muted">Ideal for less than 10 years experience</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="cv-length-option" data-length="2">
+                                    <h6>Two Page CV</h6>
+                                    <p class="small text-muted">For extensive experience (10+ years)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Job Description</label>
+                        <textarea class="form-control" rows="6" readonly>The Policy & Risk Senior Specialist will support the Policy & Risk Lead within the Policy, Governance & Oversight Team. The primary responsibilities include managing the Business Unit Risk Appetite (BU RA), executing the business Unit Enterprise-Wide Risk Assessment (BU EWRA), and implementing Group-wide policies in the Asset Management sector.</textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        The tailored CV will maintain a human tone, avoid AI detection, and be optimized for ATS systems with relevant keywords.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Keywords Identified</h6>
+                        <div>
+                            <span class="keyword-badge">Risk Management</span>
+                            <span class="keyword-badge">Policy Implementation</span>
+                            <span class="keyword-badge">Financial Crime</span>
+                            <span class="keyword-badge">Risk Assessment</span>
+                            <span class="keyword-badge">Governance</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Generate Tailored CV</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cover Letter Modal -->
+    <div class="modal fade" id="coverLetterModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Generate Cover Letter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Create a professional cover letter tailored to the job description and your CV with authentic human tone.</p>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Job Title</label>
+                        <input type="text" class="form-control" value="Policy & Risk Senior Specialist" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Company</label>
+                        <input type="text" class="form-control" value="M&G plc" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Tone</label>
+                        <select class="form-select" id="cover-letter-tone">
+                            <option>Professional</option>
+                            <option>Enthusiastic</option>
+                            <option>Formal</option>
+                            <option>Conversational</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="include-sponsorship" checked>
+                        <label class="form-check-label" for="include-sponsorship">
+                            Mention right to work/sponsorship status
+                        </label>
+                    </div>
+                    
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Human Tone Optimized</strong>
+                        <p class="mb-0 mt-1">Your cover letter will use natural language that avoids AI detection while maintaining professionalism.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Generate Cover Letter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create CV Modal -->
+    <div class="modal fade" id="createCvModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New CV</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Build a professional CV from scratch with our AI-powered builder that creates ATS-friendly, human-sounding documents.</p>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">CV Name</label>
+                        <input type="text" class="form-control" placeholder="e.g. John_Doe_CV_Finance">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">CV Length</label>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="cv-length-option selected" data-length="1">
+                                    <h6>One Page CV</h6>
+                                    <p class="small text-muted">Recommended for most applicants</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="cv-length-option" data-length="2">
+                                    <h6>Two Page CV</h6>
+                                    <p class="small text-muted">For extensive experience (10+ years)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Template</label>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card cv-template selected">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-file-alt fa-2x mb-2"></i>
+                                        <h6>Professional</h6>
+                                        <p class="small text-muted">Clean and traditional</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card cv-template">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-briefcase fa-2x mb-2"></i>
+                                        <h6>Modern</h6>
+                                        <p class="small text-muted">Contemporary design</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card cv-template">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-chart-line fa-2x mb-2"></i>
+                                        <h6>Executive</h6>
+                                        <p class="small text-muted">For senior roles</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="optimize-ats" checked>
+                        <label class="form-check-label" for="optimize-ats">
+                            Optimize for ATS systems
+                        </label>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="human-tone" checked>
+                        <label class="form-check-label" for="human-tone">
+                            Use natural human tone (avoids AI detection)
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Create CV</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contacts Modal -->
+    <div class="modal fade" id="contactsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Potential Contacts</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Contact sourcing features would be displayed here for premium users.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div class="modal fade" id="privacyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Privacy Policy</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>1. Information We Collect</h6>
+                    <p>We collect information that you provide directly to us, including:</p>
+                    <ul>
+                        <li>Account information (name, email address, password)</li>
+                        <li>Payment information for subscription services</li>
+                        <li>Job applications and tracking data</li>
+                        <li>CVs, cover letters, and other documents you upload</li>
+                        <li>Usage data and preferences</li>
+                    </ul>
+                    
+                    <h6>2. How We Use Your Information</h6>
+                    <p>We use the information we collect to:</p>
+                    <ul>
+                        <li>Provide, maintain, and improve our services</li>
+                        <li>Process your transactions and send related information</li>
+                        <li>Send technical notices, updates, and support messages</li>
+                        <li>Respond to your comments and questions</li>
+                        <li>Personalize your experience and provide tailored job search assistance</li>
+                    </ul>
+                    
+                    <h6>3. Information Sharing</h6>
+                    <p>We do not sell, trade, or rent your personal information to third parties. We may share information with:</p>
+                    <ul>
+                        <li>Service providers who assist in our operations</li>
+                        <li>Legal authorities when required by law</li>
+                        <li>Other parties with your consent</li>
+                    </ul>
+                    
+                    <h6>4. Data Security</h6>
+                    <p>We implement appropriate security measures to protect your personal information against unauthorized access, alteration, or destruction.</p>
+                    
+                    <h6>5. Your Rights</h6>
+                    <p>You have the right to access, correct, or delete your personal data. Contact us at sponsorscope.0@gmail.com for data-related requests.</p>
+                    
+                    <h6>6. Changes to This Policy</h6>
+                    <p>We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page.</p>
+                    
+                    <p class="mt-4"><strong>Last updated:</strong> September 3, 2025</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Terms of Service</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>1. Acceptance of Terms</h6>
+                    <p>By accessing and using Sponsorscope, you accept and agree to be bound by the terms and provision of this agreement.</p>
+                    
+                    <h6>2. Use License</h6>
+                    <p>Permission is granted to temporarily use Sponsorscope for personal, non-commercial transitory viewing only.</p>
+                    
+                    <h6>3. Subscription Services</h6>
+                    <p>Some features require a paid subscription. Subscription fees are billed in advance on a recurring basis.</p>
+                    
+                    <h6>4. User Content</h6>
+                    <p>You retain ownership of any content you submit to Sponsorscope. By submitting content, you grant us a license to use, modify, and display that content for the purpose of providing our services.</p>
+                    
+                    <h6>5. Prohibited Uses</h6>
+                    <p>You may not use our service:</p>
+                    <ul>
+                        <li>For any unlawful purpose</li>
+                        <li>To harass, abuse, or harm others</li>
+                        <li>To impersonate any person or entity</li>
+                        <li>To interfere with or circumvent the security features of the service</li>
+                    </ul>
+                    
+                    <h6>6. Termination</h6>
+                    <p>We may terminate or suspend access to our service immediately, without prior notice, for any breach of these Terms.</p>
+                    
+                    <h6>7. Limitation of Liability</h6>
+                    <p>In no event shall Sponsorscope, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages.</p>
+                    
+                    <h6>8. Governing Law</h6>
+                    <p>These Terms shall be governed and construed in accordance with the laws of United Kingdom, without regard to its conflict of law provisions.</p>
+                    
+                    <p class="mt-4"><strong>Last updated:</strong> September 3, 2025</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Policy Modal -->
+    <div class="modal fade" id="cookiesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cookie Policy</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>1. What Are Cookies</h6>
+                    <p>Cookies are small text files that are placed on your computer by websites that you visit.</p>
+                    
+                    <h6>2. How We Use Cookies</h6>
+                    <p>We use cookies to:</p>
+                    <ul>
+                        <li>Remember your preferences and settings</li>
+                        <li>Understand how you use our website</li>
+                        <li>Improve our services and user experience</li>
+                        <li>Provide personalized content</li>
+                    </ul>
+                    
+                    <h6>3. Types of Cookies We Use</h6>
+                    <ul>
+                        <li><strong>Essential cookies:</strong> Required for the website to function properly</li>
+                        <li><strong>Performance cookies:</strong> Help us understand how visitors interact with our website</li>
+                        <li><strong>Functionality cookies:</strong> Allow the website to remember choices you make</li>
+                    </ul>
+                    
+                    <h6>4. Managing Cookies</h6>
+                    <p>You can control and/or delete cookies as you wish. You can delete all cookies that are already on your computer and you can set most browsers to prevent them from being placed.</p>
+                    
+                    <p class="mt-4"><strong>Last updated:</strong> September 3, 2025</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Application State
+        const appState = {
+            currentPage: 'dashboard',
+            jobs: [
+                {
+                    id: 1,
+                    title: "Policy & Risk Senior Specialist",
+                    company: "M&G plc",
+                    date: "Sep 3, 2025",
+                    status: "new",
+                    match: 87,
+                    sponsorship: true,
+                    lastFollowup: "-"
+                },
+                {
+                    id: 2,
+                    title: "Senior Operational Risk Analyst",
+                    company: "Capital.com",
+                    date: "Sep 3, 2025",
+                    status: "applied",
+                    match: 76,
+                    sponsorship: true,
+                    lastFollowup: "Sep 5, 2025"
+                },
+                {
+                    id: 3,
+                    title: "Senior Risk Analyst",
+                    company: "Autarea",
+                    date: "Sep 3, 2025",
+                    status: "interview",
+                    match: 65,
+                    sponsorship: false,
+                    lastFollowup: "Sep 8, 2025"
+                }
+            ],
+            cvs: [
+                { name: "John_Doe_CV_General.pdf", date: "Aug 15, 2025", atsScore: 92 },
+                { name: "John_Doe_CV_Finance.pdf", date: "Aug 20, 2025", atsScore: 88 },
+                { name: "John_Doe_CV_Risk.pdf", date: "Sep 1, 2025", atsScore: 95 }
+            ],
+            sponsors: [
+                { name: "M&G plc", type: "Worker", rating: 4.5, status: "Active" },
+                { name: "Capital.com", type: "Worker", rating: 4, status: "Active" },
+                { name: "NHS Business Services Authority", type: "Worker", rating: 5, status: "Active" }
+            ]
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Sponsorscope initialized successfully!");
+            
+            // Initialize all components
+            initializeNavigation();
+            initializeCVManager();
+            initializeJobForms();
+            initializeModals();
+            initializeSponsorshipCheck();
+            
+            // Set initial state
+            showPage('dashboard');
+        });
+
+        // Navigation System
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.sidebar .nav-link');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetPage = this.getAttribute('data-page');
+                    showPage(targetPage);
+                });
+            });
+
+            // Add Job button
+            document.getElementById('add-job-btn').addEventListener('click', function() {
+                showPage('add-job');
+            });
+
+            // Cancel Add Job button
+            document.getElementById('cancel-add-job').addEventListener('click', function() {
+                showPage('dashboard');
+            });
+        }
+
+        function showPage(pageName) {
+            // Update active nav link
+            document.querySelectorAll('.sidebar .nav-link').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            document.querySelector(`[data-page="${pageName}"]`).classList.add('active');
+            
+            // Show target page
+            document.querySelectorAll('.main-content').forEach(page => {
+                page.classList.add('d-none');
+            });
+            document.getElementById(`${pageName}-page`).classList.remove('d-none');
+            
+            appState.currentPage = pageName;
+        }
+
+        // CV Manager System
+        function initializeCVManager() {
+            const uploadArea = document.getElementById('cv-upload-area');
+            const fileInput = document.getElementById('cv-file-input');
+            
+            // CV Upload
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileUpload);
+            
+            // CV Length Selection
+            document.querySelectorAll('.cv-length-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.cv-length-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                });
+            });
+
+            // CV Template Selection
+            document.querySelectorAll('.cv-template').forEach(template => {
+                template.addEventListener('click', function() {
+                    document.querySelectorAll('.cv-template').forEach(t => {
+                        t.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                });
+            });
+
+            // Initialize CV list
+            renderCVList();
+        }
+
+        function handleFileUpload(event) {
+            if (event.target.files && event.target.files[0]) {
+                const fileName = event.target.files[0].name;
+                showNotification(`File "${fileName}" uploaded successfully!`, 'success');
+                
+                // Add to CV list
+                const newCV = {
+                    name: fileName,
+                    date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+                    atsScore: Math.floor(Math.random() * 10) + 85 // Random score between 85-94
+                };
+                
+                appState.cvs.unshift(newCV);
+                renderCVList();
+            }
+        }
+
+        function renderCVList() {
+            const cvList = document.getElementById('cv-list');
+            cvList.innerHTML = '';
+            
+            appState.cvs.forEach(cv => {
+                const item = document.createElement('a');
+                item.href = '#';
+                item.className = 'list-group-item list-group-item-action';
+                item.innerHTML = `
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">${cv.name}</h6>
+                        <small>${cv.date}</small>
+                    </div>
+                    <p class="mb-1">ATS Score: <span class="ats-score">${cv.atsScore}%</span></p>
+                `;
+                cvList.appendChild(item);
+            });
+        }
+
+        // Job Forms System
+        function initializeJobForms() {
+            const addJobForm = document.getElementById('add-job-form');
+            addJobForm.addEventListener('submit', handleAddJob);
+        }
+
+        function handleAddJob(event) {
+            event.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('job-title').value,
+                company: document.getElementById('company').value,
+                url: document.getElementById('job-url').value,
+                source: document.getElementById('source').value,
+                description: document.getElementById('job-description').value,
+                location: document.getElementById('location').value,
+                salary: document.getElementById('salary').value,
+                checkSponsorship: document.getElementById('sponsorship-check').checked
+            };
+            
+            // Validate form
+            if (!formData.title || !formData.company || !formData.url || !formData.source || !formData.description) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Add to jobs list
+            const newJob = {
+                id: appState.jobs.length + 1,
+                title: formData.title,
+                company: formData.company,
+                date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+                status: "new",
+                match: Math.floor(Math.random() * 20) + 75, // Random match between 75-94
+                sponsorship: formData.checkSponsorship && checkSponsorshipAvailability(formData.company),
+                lastFollowup: "-"
+            };
+            
+            appState.jobs.unshift(newJob);
+            
+            showNotification('Job added successfully! Checking match score...', 'success');
+            
+            // Reset form
+            document.getElementById('add-job-form').reset();
+            
+            // Return to dashboard
+            showPage('dashboard');
+        }
+
+        // Sponsorship Check System
+        function initializeSponsorshipCheck() {
+            const searchButton = document.getElementById('search-company');
+            searchButton.addEventListener('click', handleSponsorshipSearch);
+        }
+
+        function handleSponsorshipSearch() {
+            const companyName = document.getElementById('company-search').value.trim();
+            
+            if (!companyName) {
+                showNotification('Please enter a company name', 'error');
+                return;
+            }
+            
+            const result = checkSponsorshipAvailability(companyName);
+            const resultsContainer = document.getElementById('sponsorship-results');
+            
+            if (result) {
+                resultsContainer.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Sponsorship Available</strong>
+                        <p class="mb-0 mt-1">${companyName} is on the UK Government registered sponsors list.</p>
+                    </div>
+                `;
+            } else {
+                resultsContainer.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Sponsorship Not Found</strong>
+                        <p class="mb-0 mt-1">${companyName} is not currently on the UK Government registered sponsors list.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function checkSponsorshipAvailability(companyName) {
+            // Simulate checking against known sponsors
+            const knownSponsors = ['M&G plc', 'Capital.com', 'NHS', 'Barclays', 'HSBC', 'Lloyds', 'Santander', 'Google', 'Microsoft', 'Amazon'];
+            return knownSponsors.some(sponsor => 
+                companyName.toLowerCase().includes(sponsor.toLowerCase()) || 
+                sponsor.toLowerCase().includes(companyName.toLowerCase())
+            );
+        }
+
+        // Modal System
+        function initializeModals() {
+            // Initialize all Bootstrap modals
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                new bootstrap.Modal(modal);
+            });
+        }
+
+        // Utility Functions
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            `;
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+
+        // Error handling
+        window.addEventListener('error', function(e) {
+            console.error('Application error:', e.error);
+            showNotification('An unexpected error occurred. Please refresh the page.', 'error');
+        });
+
+        // Export app state for debugging
+        window.appState = appState;
+    </script>
+</body>
+</html>
